@@ -14,8 +14,8 @@
  *****************************************************************************/
 
 #include <Arduino.h>
-#include <esp32-mqtt.h>
 #include <MyBME280.h>
+#include <esp32-mqtt.h>
 
 MyBME280 bme;
 
@@ -54,11 +54,11 @@ void loop() {
 }
 
 void log(String msg) {
-  String json = "{";
-  json += "\"msg\":";
-  json += msg;
-  json += "}"; 
-  Serial.println(json);
   // publish処理(送信処理)
+  String json = "{";
+  json += "\"pub\":";
+  json += msg;
+  json += "}";
+  Serial.println(json);
   publishTelemetry(json);
 }

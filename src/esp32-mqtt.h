@@ -17,14 +17,13 @@
 #define __ESP32_MQTT_H__
 
 #include <Client.h>
+#include <CloudIoTCore.h>
+#include <CloudIoTCoreMqtt.h>
+#include <MQTT.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 
-#include <MQTT.h>
-
-#include <CloudIoTCore.h>
-#include <CloudIoTCoreMqtt.h>
-#include "ciotc_config.h" // Update this file with your configuration
+#include "ciotc_config.h"  // Update this file with your configuration
 
 // !!REPLACEME!!
 // The MQTT callback function for commands and configuration updates
@@ -45,9 +44,7 @@ String jwt;
 ///////////////////////////////
 // Helpers specific to this board
 ///////////////////////////////
-String getDefaultSensor() {
-  return  "Wifi: " + String(WiFi.RSSI()) + "db";
-}
+String getDefaultSensor() { return "Wifi: " + String(WiFi.RSSI()) + "db"; }
 
 String getJwt() {
   iss = time(nullptr);
@@ -60,7 +57,8 @@ void setupWifi() {
   Serial.println("Starting wifi");
 
   WiFi.mode(WIFI_STA);
-  // WiFi.setSleep(false); // May help with disconnect? Seems to have been removed from WiFi
+  // WiFi.setSleep(false); // May help with disconnect? Seems to have been
+  // removed from WiFi
   WiFi.begin(ssid, password);
   Serial.println("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -85,11 +83,9 @@ void connectWifi() {
 ///////////////////////////////
 // Orchestrates various methods from preceeding code.
 ///////////////////////////////
-bool publishTelemetry(String data) {
-  return mqtt->publishTelemetry(data);
-}
+bool publishTelemetry(String data) { return mqtt->publishTelemetry(data); }
 
-bool publishTelemetry(const char* data, int length) {
+bool publishTelemetry(const char *data, int length) {
   return mqtt->publishTelemetry(data, length);
 }
 
@@ -97,7 +93,7 @@ bool publishTelemetry(String subfolder, String data) {
   return mqtt->publishTelemetry(subfolder, data);
 }
 
-bool publishTelemetry(String subfolder, const char* data, int length) {
+bool publishTelemetry(String subfolder, const char *data, int length) {
   return mqtt->publishTelemetry(subfolder, data, length);
 }
 
@@ -107,16 +103,15 @@ void connect() {
 }
 
 void setupCloudIoT() {
-  device = new CloudIoTCoreDevice(
-      project_id, location, registry_id, device_id,
-      private_key_str);
+  device = new CloudIoTCoreDevice(project_id, location, registry_id, device_id,
+                                  private_key_str);
 
   setupWifi();
   netClient = new WiFiClientSecure();
   mqttClient = new MQTTClient(512);
-  mqttClient->setOptions(180, true, 1000); // keepAlive, cleanSession, timeout
+  mqttClient->setOptions(180, true, 1000);  // keepAlive, cleanSession, timeout
   mqtt = new CloudIoTCoreMqtt(mqttClient, netClient, device);
   mqtt->setUseLts(true);
   mqtt->startMQTT();
 }
-#endif //__ESP32_MQTT_H__
+#endif  //__ESP32_MQTT_H__
