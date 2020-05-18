@@ -20,7 +20,7 @@
 MyBME280 bme;
 
 // prototype
-void log(String msg);
+void publish();
 
 void setup() {
   Serial.begin(115200);
@@ -33,8 +33,6 @@ void setup() {
     Serial.println("Could not find a valid BME280 sensor, do re-checking.");
     delay(5000);
   }
-
-  log("app setup start");
 }
 
 unsigned long lastMillis = 0;
@@ -49,16 +47,21 @@ void loop() {
 
   if (millis() - lastMillis > 60000) {
     lastMillis = millis();
-    log(String(bme.getTemperature()));
+    publish();
   }
 }
 
-void log(String msg) {
+void publish() {
   // publish処理(送信処理)
   String json = "{";
-  json += "\"pub\":";
-  json += msg;
-  json += "}";
+  json += "\"CO2\":";
+  json += "{";
+  json += "\"temp\":";
+  json += bme.getTemperature();
+  json += ",";
+  json += "\"humid\":";
+  json += bme.getHumidity();
+  json += "}}";
   Serial.println(json);
   publishTelemetry(json);
 }
