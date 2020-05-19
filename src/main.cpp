@@ -20,9 +20,8 @@
 
 MyBME280 bme;
 
-const int capacity = JSON_OBJECT_SIZE(5);
-StaticJsonDocument<capacity> doc;
-StaticJsonDocument<capacity> dataDoc;
+DynamicJsonDocument doc(1024);
+JsonObject atomosphere = doc.createNestedObject("data");
 
 // prototype
 void publish();
@@ -58,10 +57,9 @@ void loop() {
 
 void publish() {
   // publish処理(送信処理)
-  doc["type"] = "CO2";
-  dataDoc["Temperature"] = bme.getTemperature();
-  dataDoc["Humidity"] = bme.getHumidity();
-  doc["data"] = dataDoc;
+  doc["Sensor"] = "BME280";
+  atomosphere["Temperature"] = bme.getTemperature();
+  atomosphere["Humidity"] = bme.getHumidity();
   String output;
   serializeJson(doc, output);
   Serial.println(output);
